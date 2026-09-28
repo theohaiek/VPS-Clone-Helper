@@ -1,0 +1,7 @@
+# Scripts run on Linux servers: always LF, on every OS.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+hooks/vps-clone-hook text eol=lf

@@ -1,0 +1,21 @@
+# Clone job workspace: secrets, keys, inventories, dumps. Never commit.
+.vps-clone/
+**/.vps-clone/
+
+# Keys and secrets that may be dropped here by mistake
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+*.secrets.json
+.env
+.env.*
+
+# Local Claude settings
+.claude/settings.local.json
+
+# Python / OS noise
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

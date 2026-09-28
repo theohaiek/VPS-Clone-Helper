@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Hook for VPS-Clone-Helper, wired to UserPromptSubmit and SessionStart.
+# UserPromptSubmit: prints context for Claude once per session - the real permission mode (only this event
+# receives it), and either the first-run protocol or the job's next step.
+# SessionStart (startup/resume/clear/compact): prints nothing; it re-arms the once-per-session output so the
+# context comes back after a compaction or /clear.
+# Plugin mode: silent unless the project has a .vps-clone/ workspace or the prompt talks about cloning.
+# Repo mode (--always): always speaks. Never fails the session: every path exits 0.
+
+input=$(cat 2>/dev/null || true)
+flat=$(printf '%s' "$input" | tr -d '\r\n')
+field(){ printf '%s' "$flat" | sed -n "s/.*\"$1\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p"; }
+event=$(field hook_event_name)
+mode=$(field permission_mode)
+session=$(field session_id | tr -cd 'A-Za-z0-9-')
+[ -n "$mode" ] || mode=unknown
+
+project="${CLAUDE_PROJECT_DIR:-$PWD}"
+ws="${VPSCLONE_DIR:-$project/.vps-clone}"
+marker_dir="${TMPDIR:-/tmp}/vps-clone-hook"
+marker="$marker_dir/${session:-nosession}"
+always=0
+[ "${1:-}" = "--always" ] && always=1
+
+if [ "$event" = "SessionStart" ]; then
+  rm -f "$marker" 2>/dev/null
+  exit 0
+fi
+
+if [ "$always" = 0 ] && [ ! -d "$ws" ]; then
+  printf '%s' "$(field prompt)" | grep -qiE 'vps-clone|clon|migrat|migra' || exit 0
+fi
+[ -f "$marker" ] && exit 0
+mkdir -p "$marker_dir" 2>/dev/null && : > "$marker" 2>/dev/null
+find "$marker_dir" -type f -mtime +2 -delete 2>/dev/null
+
+echo "[vps-clone-helper] permission_mode=$mode"
+if [ ! -f "$ws/STATE.md" ]; then
+  echo "[vps-clone-helper] FIRST RUN (no $ws/STATE.md). Before ANY tool call, begin your reply with these lines, translated to the user's language, nothing before them:"
+  echo "  Risks: I will run root commands on servers, may buy servers in your account (up to the cap you approve) and change DNS, without asking at each step. The source stays read-only; mistakes can cost money or break the new servers."
+  if [ "$mode" != "bypassPermissions" ]; then
+    echo "  Reopen in this folder with \`claude --dangerously-skip-permissions\` so I can work without stopping."
+  fi
+  echo "  Then, in the same turn, start Phase 1 (readiness) of the vps-clone skill: skills/vps-clone/SKILL.md in a repo clone, or the plugin skill vps-clone-helper:vps-clone."
+else
+  if [ "$mode" != "bypassPermissions" ]; then
+    echo "[vps-clone-helper] Not in bypass mode: tell the user once, in one line, to reopen with \`claude --dangerously-skip-permissions\`."
+  fi
+  echo "[vps-clone-helper] Clone job in progress (workspace $ws). Resume from STATE.md; its next step:"
+  awk '/^## Next step/{f=1; next} /^## /{f=0} f && NF' "$ws/STATE.md" 2>/dev/null | sed -n '1,8p'
+fi
+exit 0

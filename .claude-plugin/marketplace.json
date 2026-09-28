@@ -1,0 +1,21 @@
+{
+  "name": "vps-clone-helper",
+  "description": "Marketplace for VPS Clone Helper, a Claude Code plugin that clones VPS servers end to end.",
+  "owner": {
+    "name": "Theo Haiek",
+    "url": "https://github.com/theohaiek"
+  },
+  "plugins": [
+    {
+      "name": "vps-clone-helper",
+      "version": "1.0.0",
+      "source": "./",
+      "description": "Clone a VPS or a whole multi-server topology into new servers in your own provider account, autonomously and read-only on the source.",
+      "author": {
+        "name": "Theo Haiek",
+        "url": "https://github.com/theohaiek"
+      },
+      "category": "devops"
+    }
+  ]
+}

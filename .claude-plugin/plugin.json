@@ -1,0 +1,14 @@
+{
+  "name": "vps-clone-helper",
+  "displayName": "VPS Clone Helper",
+  "version": "1.0.0",
+  "description": "Clone a VPS or a whole multi-server topology into new servers in your own provider account, autonomously and read-only on the source: readiness check, inventory, provisioning, Docker Swarm/compose/systemd redeploy, data, DNS/TLS, parity proof, hardening and backups.",
+  "author": {
+    "name": "Theo Haiek",
+    "url": "https://github.com/theohaiek"
+  },
+  "homepage": "https://github.com/theohaiek/VPS-Clone-Helper",
+  "repository": "https://github.com/theohaiek/VPS-Clone-Helper",
+  "license": "MIT",
+  "keywords": ["vps", "server", "clone", "migration", "docker-swarm", "docker-compose", "portainer", "traefik", "devops", "infrastructure", "hetzner", "digitalocean"]
+}
