@@ -1,4 +1,4 @@
-# VPS Clone Helper
+<h1 align="center"><img src="assets/logo.png" alt="VPS Clone Helper" width="560"></h1>
 
 **Give Claude Code everything it needs to clone a VPS on its own.** Point it at a running server (or a whole
 Docker Swarm), tell it where the copy should live, and it does the rest: checks your setup, inventories the
@@ -81,6 +81,7 @@ The doctor tells you exactly what is missing and how to get it.
 ## What's inside
 
 ```
+assets/                  logo
 .claude-plugin/          plugin + marketplace manifests
 hooks/                   prompt hook: real permission mode, first-run protocol, job state
 CLAUDE.md                first-run protocol when you open Claude in this folder
